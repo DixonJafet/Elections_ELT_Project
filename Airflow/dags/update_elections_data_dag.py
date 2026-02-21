@@ -2,27 +2,13 @@ from airflow.sdk import dag, task
 from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
-from cosmos.profiles import SnowflakeUserPasswordProfileMapping
-from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig
+from airflow.providers.dbt.cloud.operators.dbt import DbtCloudRunJobOperator
 from pathlib import Path
 import os
 
 
 @dag
 def update_elections_data():
-    DBT_PROJECT_PATH = Path(os.getenv("DBT_ROOT_PATH", "/opt/airflow/dbt"))
-
-    profile_config = ProfileConfig(
-        profile_name="Snowflake_Analytics_Elections",
-        target_name="dev",
-        profile_mapping=SnowflakeUserPasswordProfileMapping(
-            conn_id="my_snowflake", # Matches the ID in Airflow UI
-            profile_args={
-                "database": "ELECTIONS",
-                "schema": "DBT_JDIXON",
-            },
-        ),
-    )
 
 
 
@@ -59,11 +45,14 @@ def update_elections_data():
    
 
 
-    transform_data = DbtTaskGroup(
-        group_id="dbt_transformation",
-        project_config=ProjectConfig(DBT_PROJECT_PATH),
-        profile_config=profile_config,
-
+    # Task 2: Trigger dbt Cloud transformation job
+    transform_data = DbtCloudRunJobOperator(
+        task_id="transform_data",
+        dbt_cloud_conn_id="dbt_cloud_default", # Connection set in Airflow UI or Docker ENV
+        job_id=70471823561707,                         # Your dbt Cloud Job ID
+        wait_for_termination=True,             # Task stays 'running' until dbt job finishes
+        check_interval=30,                     # Seconds between status checks
+        timeout=3600                           # Timeout after 1 hour
     )
 
         
