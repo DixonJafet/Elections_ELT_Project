@@ -10,7 +10,6 @@
 
 ---
 
-
-ELT project about historical elections in Costa Rica 1986-2026:
-Tableau: [Dashboard](https://lnkd.in/eB_FZNDR)
-ELT process: [Explanation Video](https://lnkd.in/eFP4c_j9)
+## ELT project about historical elections in Costa Rica 1986-2026:
+- **Tableau:** [Dashboard](https://lnkd.in/eB_FZNDR)
+- **ELT process:** [Explanation Video](https://lnkd.in/eFP4c_j9)
